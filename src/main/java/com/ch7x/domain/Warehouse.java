@@ -1,5 +1,6 @@
 package com.ch7x.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -8,7 +9,7 @@ import lombok.Data;
 @Data
 @TableName("warehouse")
 public class Warehouse {
-    @TableId
+    @TableId(type = IdType.AUTO)
     @TableField("w_no")
     private Integer wNo;
     @TableField("c_no")

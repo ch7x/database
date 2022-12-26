@@ -18,21 +18,6 @@ public class CommodityController {
     private CommodityService commodityService;
 
     /**
-     * 商品添加
-     * http://localhost:8080/commodity
-     */
-    @PostMapping()
-    public boolean insert(@RequestBody Commodity commodity) {
-        //首先判断是否已经有该商品
-        LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Commodity::getCName,commodity.getCName());
-        if (commodityService.count(lqw)!=0){
-            return false;
-        }
-        return commodityService.save(commodity);
-    }
-
-    /**
      * 商品查找
      */
     @GetMapping()
