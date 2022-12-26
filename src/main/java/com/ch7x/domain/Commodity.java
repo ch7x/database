@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 @TableName("commodity")   //数据库中表名
 public class Commodity {
-    @TableField("c_no")   //指定数据表中的字段名
     @TableId
+    @TableField("c_no")   //指定数据表中的字段名
     private Integer cNo;
     @TableField("c_name")
     private String cName;
