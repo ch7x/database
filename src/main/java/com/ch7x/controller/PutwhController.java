@@ -1,6 +1,7 @@
 package com.ch7x.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch7x.domain.Commodity;
 import com.ch7x.domain.Putwh;
 import com.ch7x.domain.Warehouse;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+
+import static org.apache.logging.log4j.util.Strings.isNotEmpty;
 
 @RestController
 @RequestMapping("/put")
@@ -27,7 +30,7 @@ public class PutwhController {
      * 1,商品添加
      * 2,入库操作
      * 3,记录入库日志
-     * http://localhost:8080/putwh?pNumber=1&deliveryman="黄 章"
+     * http://localhost:8080/put?pNumber=1&deliveryman="黄 章"
      */
     @PostMapping()
     public boolean insert(@RequestBody Commodity commodity,
@@ -84,5 +87,19 @@ public class PutwhController {
             putwh.setCNo(commodity.getCNo());
         }
         return putwhService.save(putwh);
+    }
+
+    /**
+     * 入库的分页查询
+     */
+    @GetMapping("/page")
+    public Page<Putwh> getByCno(int page, int pageSize, String date) {
+        Page<Putwh> pageInfo = new Page<>(page, pageSize);
+        System.out.println(page);
+        LambdaQueryWrapper<Putwh> lqw = new LambdaQueryWrapper<>();
+        System.out.println(date);
+        lqw.like(isNotEmpty(date), Putwh::getPDate, date);
+
+        return putwhService.page(pageInfo, lqw);
     }
 }
