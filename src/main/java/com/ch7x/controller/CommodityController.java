@@ -25,9 +25,19 @@ public class CommodityController {
     public String insert(@RequestBody Commodity commodity) {
         //首先判断仓库中是否已经有该商品
         LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Commodity::getCName,commodity.getCName());
-        System.out.println(commodityService.count(lqw));
-        commodityService.save(commodity);
+        System.out.println(commodity.getCName());
+        lqw.eq(Commodity::getCName, commodity.getCName());
+        List<Commodity> list = commodityService.list(lqw);
+        //原先仓库中没有
+        if (commodityService.count(lqw) == 0) {
+            commodityService.save(commodity);
+        }else {
+            Commodity commodity1 = list.get(0);
+            System.out.println(commodity1);
+            String cSize = commodity1.getCSize();
+            //commodityService.updateById(commodity);
+        }
+
         return "添加成功";
     }
 
@@ -35,7 +45,7 @@ public class CommodityController {
      * 商品查找
      */
     @GetMapping()
-    public List<Commodity> getByCno(@RequestParam List<String> cnos){
+    public List<Commodity> getByCno(@RequestParam List<String> cnos) {
         LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
         lqw.in(Commodity::getCNo, cnos);
         return commodityService.list(lqw);
