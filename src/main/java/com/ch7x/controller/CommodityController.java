@@ -19,16 +19,17 @@ public class CommodityController {
 
     /**
      * 商品添加
-     * http://localhost:8080/commodity/save
+     * http://localhost:8080/commodity
      */
-    @PostMapping("/save")
-    public String insert(@RequestBody Commodity commodity) {
-        //首先判断仓库中是否已经有该商品
+    @PostMapping()
+    public boolean insert(@RequestBody Commodity commodity) {
+        //首先判断是否已经有该商品
         LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
         lqw.eq(Commodity::getCName,commodity.getCName());
-        System.out.println(commodityService.count(lqw));
-        commodityService.save(commodity);
-        return "添加成功";
+        if (commodityService.count(lqw)!=0){
+            return false;
+        }
+        return commodityService.save(commodity);
     }
 
     /**
@@ -46,8 +47,7 @@ public class CommodityController {
      */
     @PutMapping()
     public boolean update(@RequestBody Commodity commodity) {
-//        return commodityService.modify(commodity);
-        return false;
+        return commodityService.updateById(commodity);
     }
 
     /**
