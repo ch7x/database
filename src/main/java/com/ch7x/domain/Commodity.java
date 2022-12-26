@@ -12,7 +12,6 @@ import java.util.Objects;
 @TableName("commodity")   //数据库中表名
 public class Commodity {
     @TableId(type = IdType.AUTO)
-    @TableField("c_no")   //指定数据表中的字段名
     private Integer cNo;
     @TableField("c_name")
     private String cName;

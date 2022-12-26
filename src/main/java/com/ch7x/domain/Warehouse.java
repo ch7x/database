@@ -10,7 +10,6 @@ import lombok.Data;
 @TableName("warehouse")
 public class Warehouse {
     @TableId(type = IdType.AUTO)
-    @TableField("w_no")
     private Integer wNo;
     @TableField("c_no")
     private Integer cNo;

@@ -12,7 +12,6 @@ import java.util.Date;
 @TableName("outwh")
 public class Outwh {
     @TableId(type = IdType.AUTO)
-    @TableField("o_no")
     private Integer oNo;
     @TableField("c_no")
     private Integer cNo;
