@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/putwh")
+@RequestMapping("/put")
 public class PutwhController {
     @Autowired
     private CommodityService commodityService;
@@ -27,6 +27,7 @@ public class PutwhController {
      * 1,商品添加
      * 2,入库操作
      * 3,记录入库日志
+     * http://localhost:8080/putwh?pNumber=1&deliveryman="黄 章"
      */
     @PostMapping()
     public boolean insert(@RequestBody Commodity commodity,
@@ -68,22 +69,20 @@ public class PutwhController {
             //记录入库日志
             putwh.setWNo(warehouse.getWNo());
             putwh.setCNo(cNo);
-            return putwhService.save(putwh);
+        } else {
+
+            //如果仓库中没有该商品，则添加进商品表和仓库表
+            commodityService.save(commodity);
+
+            Warehouse warehouse = new Warehouse();
+            warehouse.setCNumber(pNumber);
+            warehouse.setCNo(commodity.getCNo());
+            warehouseService.save(warehouse);
+
+            //记录入库日志
+            putwh.setWNo(warehouse.getWNo());
+            putwh.setCNo(commodity.getCNo());
         }
-
-        //如果仓库中没有该商品，则添加进商品表和仓库表
-        commodityService.save(commodity);
-
-        Warehouse warehouse = new Warehouse();
-        warehouse.setCNumber(pNumber);
-        warehouse.setCNo(commodity.getCNo());
-        warehouseService.save(warehouse);
-
-        //记录入库日志
-        putwh.setWNo(warehouse.getWNo());
-        putwh.setCNo(commodity.getCNo());
         return putwhService.save(putwh);
-
     }
-
 }

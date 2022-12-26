@@ -1,12 +1,15 @@
 package com.ch7x.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch7x.domain.Commodity;
 import com.ch7x.service.CommodityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.apache.logging.log4j.util.Strings.isNotEmpty;
 
 /**
  * 商品管理
@@ -20,11 +23,15 @@ public class CommodityController {
     /**
      * 商品查找
      */
-    @GetMapping()
-    public List<Commodity> getByCno(@RequestParam List<String> cnos){
+    @GetMapping("/page")
+    public Page<Commodity> getByCno(int page, int pageSize, String name) {
+        Page<Commodity> pageInfo = new Page<>(page, pageSize);
+        System.out.println(page);
         LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
-        lqw.in(Commodity::getCNo, cnos);
-        return commodityService.list(lqw);
+        System.out.println(name);
+        lqw.like(isNotEmpty(name), Commodity::getCName, name);
+
+        return commodityService.page(pageInfo, lqw);
     }
 
     /**
