@@ -23,6 +23,10 @@ public class CommodityController {
      */
     @PostMapping("/save")
     public String insert(@RequestBody Commodity commodity) {
+        //首先判断仓库中是否已经有该商品
+        LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Commodity::getCName,commodity.getCName());
+        System.out.println(commodityService.count(lqw));
         commodityService.save(commodity);
         return "添加成功";
     }
@@ -33,7 +37,7 @@ public class CommodityController {
     @GetMapping()
     public List<Commodity> getByCno(@RequestParam List<String> cnos){
         LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
-        lqw.in(Commodity::getCno, cnos);
+        lqw.in(Commodity::getCNo, cnos);
         return commodityService.list(lqw);
     }
 
@@ -53,7 +57,7 @@ public class CommodityController {
     @DeleteMapping()
     public boolean deleteByCno(@RequestParam List<String> cnos) {
         LambdaQueryWrapper<Commodity> lqw1 = new LambdaQueryWrapper<>();
-        lqw1.in(Commodity::getCno, cnos);
+        lqw1.in(Commodity::getCNo, cnos);
         return commodityService.remove(lqw1);
     }
 }

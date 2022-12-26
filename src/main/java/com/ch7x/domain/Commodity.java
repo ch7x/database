@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class Commodity {
-    private String cno;
-    private String cname;
-    private String cmanufacturer;
-    private String cmodel;
-    private String csize;
+    private Integer cNo;
+    private String cName;
+    private String cManufacturer;
+    private String cModel;
+    private String cSize;
 }
