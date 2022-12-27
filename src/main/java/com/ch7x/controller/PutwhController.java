@@ -194,20 +194,7 @@ public class PutwhController {
             return putwhDto;
         }).collect(Collectors.toList());
 
-
-
-
-
-
         putwhDtoPage.setRecords(list);
-
-        //1,通过商品名字得到所有商品cno
-        //select cno from commodity where cname like commodity.getCName()
-
-//        //2，通过cno查询入库表
-//        LambdaQueryWrapper<PutwhDto> lqw = new LambdaQueryWrapper<>();
-//        lqw.in(commodity.getCName() != null, PutwhDto::getCNo, arrayList);
-
 
         return putwhDtoPage;
     }
