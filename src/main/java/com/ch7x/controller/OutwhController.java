@@ -100,9 +100,6 @@ public class OutwhController {
     public Page<OutwhDto> page(@PathVariable("currentPage") Integer page,
                                @PathVariable("pageSize") Integer pageSize, Commodity commodity,
                                @RequestParam("value") String value) {
-//        System.out.println(commodity);
-//        System.out.println(value);
-//        System.out.println(value.length());
 
         Page<Outwh> pageInfo = new Page<>(page, pageSize);
         Page<OutwhDto> outwhDtoPage = new Page<>();

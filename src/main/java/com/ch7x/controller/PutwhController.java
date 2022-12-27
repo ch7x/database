@@ -32,14 +32,13 @@ public class PutwhController {
      * 1,商品添加
      * 2,入库操作
      * 3,记录入库日志
-     * http://localhost:8080/put?pNumber=1&deliveryman="黄 章"
+     * http://localhost/put?pNumber=1&deliveryman="黄 章"
      */
     @PostMapping()
-    public boolean insert(@RequestBody Commodity commodity,
-                          @RequestParam Integer pNumber,                //入库商品数量
-                          @RequestParam String deliveryman) {           //入库人
+    public boolean insert(PutwhDto putwhDto) {
 
-        //入库日志
+        System.out.println(putwhDto);
+        /*//入库日志
         Putwh putwh = new Putwh();
         putwh.setDeliveryman(deliveryman);
         putwh.setPDate(new Date());
@@ -87,8 +86,9 @@ public class PutwhController {
             //记录入库日志
             putwh.setWNo(warehouse.getWNo());
             putwh.setCNo(commodity.getCNo());
-        }
-        return putwhService.save(putwh);
+        }*/
+//        return putwhService.save(putwh);
+        return true;
     }
 
     /**
