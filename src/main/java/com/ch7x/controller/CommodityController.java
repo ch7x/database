@@ -24,15 +24,15 @@ public class CommodityController {
     /**
      * 商品查找
      */
+//    @GetMapping("/{currentPage}/{pageSize}")
+//    public IPage<Commodity> getByCno(@PathVariable int currentPage, @PathVariable int pageSize, CommodityDto commodity) {
+//
+//        return commodityService.getPage(currentPage,pageSize,commodity);
+//    }
+
+
     @GetMapping("/{currentPage}/{pageSize}")
-    public IPage<Commodity> getByCno(@PathVariable int currentPage, @PathVariable int pageSize, CommodityDto commodity) {
-
-        return commodityService.getPage(currentPage,pageSize,commodity);
-    }
-
-
-    @GetMapping("pageXml/{corund}/{limit}")
-    public IPage<CommodityDto> pageXml(@PathVariable("corund")Integer corund, @PathVariable("limit")Integer limit){
+    public IPage<CommodityDto> pageXml(@PathVariable("currentPage")Integer corund, @PathVariable("pageSize")Integer limit){
         Page<CommodityDto> page = new Page<>(corund,limit);
 
         return commodityService.findPage(page, new QueryWrapper<>());
