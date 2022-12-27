@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -133,6 +130,23 @@ public class OutwhController {
             outLambdaQueryWrapper.ge(Outwh::getODate, date1);
             outLambdaQueryWrapper.le(Outwh::getODate, date2);
         }
+
+        LambdaQueryWrapper<Commodity> commodityLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        commodityLambdaQueryWrapper.like(commodity.getCName()!=null,Commodity::getCName,commodity.getCName());
+
+        Page<Commodity> commodityPage = new Page<>();
+        commodityService.page(commodityPage,commodityLambdaQueryWrapper);
+        List<Commodity> commodityPageRecords = commodityPage.getRecords();
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        for (Commodity commodityPageRecord : commodityPageRecords) {
+            arrayList.add(commodityPageRecord.getCNo());
+        }
+
+        if(arrayList.size()==0){
+            arrayList.add(-1);
+        }
+        outLambdaQueryWrapper.in(Outwh::getCNo,arrayList);
+        outLambdaQueryWrapper.orderByDesc(Outwh::getODate);
 
         outwhService.page(pageInfo, outLambdaQueryWrapper);
 

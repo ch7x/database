@@ -172,6 +172,7 @@ public class PutwhController {
         }
         putLambdaQueryWrapper.in(Putwh::getCNo,arrayList);
         putLambdaQueryWrapper.orderByDesc(Putwh::getPDate);
+
         putwhService.page(pageInfo, putLambdaQueryWrapper);
 
 
