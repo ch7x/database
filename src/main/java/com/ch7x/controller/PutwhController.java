@@ -5,19 +5,19 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch7x.domain.Commodity;
 import com.ch7x.domain.Putwh;
 import com.ch7x.domain.Warehouse;
-import com.ch7x.dto.CommodityDto;
 import com.ch7x.dto.PutwhDto;
 import com.ch7x.service.CommodityService;
 import com.ch7x.service.PutwhService;
 import com.ch7x.service.WarehouseService;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/put")
@@ -96,13 +96,72 @@ public class PutwhController {
      * 入库的分页查询
      */
     @GetMapping("/{currentPage}/{pageSize}")
-    public Page<PutwhDto> page(@PathVariable("currentPage") Integer page, @PathVariable("pageSize") Integer pageSize, Commodity commodity, @RequestParam("value") String value) {
-        System.out.println(commodity);
-        System.out.println(value);
+    public Page<Putwh> page(@PathVariable("currentPage") Integer page,
+                            @PathVariable("pageSize") Integer pageSize, Commodity commodity,
+                            @RequestParam("value") String value) {
+//        System.out.println(commodity);
+//        System.out.println(value);
+//        System.out.println(value.length());
+
+
         Page<Putwh> pageInfo = new Page<>(page, pageSize);
         Page<PutwhDto> commodityDtoPage = new Page<>();
 
-//        LambdaQueryWrapper<Putwh> lqw = new LambdaQueryWrapper<>();
+
+        LambdaQueryWrapper<Putwh> putLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if (value.length() == 4) {
+            String d1 = value + "-01-01";
+            int temp = Integer.parseInt(value) + 1;
+            String d2 = (temp) + "-01-01";
+            System.out.println(d1 + d2);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date1, date2;
+            try {
+                date1 = sdf.parse(d1);
+                date2 = sdf.parse(d2);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            putLambdaQueryWrapper.ge(date1 != null, Putwh::getPDate, date1);
+            putLambdaQueryWrapper.le(date2 != null, Putwh::getPDate, date2);
+        }
+
+        if (value.length() == 7) {
+            String d1 = value + "-01";
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date1, date2;
+            try {
+                date1 = sdf.parse(d1);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(date1);
+            calendar.add(Calendar.MONTH, 1);
+            date2 = calendar.getTime();
+            putLambdaQueryWrapper.ge(Putwh::getPDate, date1);
+            putLambdaQueryWrapper.le(Putwh::getPDate, date2);
+        }
+
+        if (value.length() == 10) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date1,date2;
+            try {
+                date1 = sdf.parse(value);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(date1);
+            calendar.add(Calendar.HOUR, 24);
+            date2 = calendar.getTime();
+
+            putLambdaQueryWrapper.ge(Putwh::getPDate, date1);
+            putLambdaQueryWrapper.le(Putwh::getPDate, date2);
+        }
+
+        Page<Putwh> page1 = putwhService.page(pageInfo, putLambdaQueryWrapper);
+
 //        lqw.like(commodity.getCName() != null, Commodity::getCName, commodity.getCName());
 //        lqw.like(commodity.getCManufacturer() != null, Commodity::getCManufacturer, commodity.getCManufacturer());
 //
@@ -126,6 +185,6 @@ public class PutwhController {
 //
 //        commodityDtoPage.setRecords(list);
 
-        return null;
+        return page1;
     }
 }
