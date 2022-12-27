@@ -5,12 +5,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch7x.domain.Commodity;
+import com.ch7x.domain.Warehouse;
 import com.ch7x.dto.CommodityDto;
 import com.ch7x.service.CommodityService;
+import com.ch7x.service.WarehouseService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 商品管理
@@ -21,21 +25,42 @@ public class CommodityController {
     @Autowired
     private CommodityService commodityService;
 
+    @Autowired
+    private WarehouseService warehouseService;
+
     /**
      * 商品查找
      */
-//    @GetMapping("/{currentPage}/{pageSize}")
-//    public IPage<Commodity> getByCno(@PathVariable int currentPage, @PathVariable int pageSize, CommodityDto commodity) {
-//
-//        return commodityService.getPage(currentPage,pageSize,commodity);
-//    }
-
-
     @GetMapping("/{currentPage}/{pageSize}")
-    public IPage<CommodityDto> pageXml(@PathVariable("currentPage")Integer corund, @PathVariable("pageSize")Integer limit){
-        Page<CommodityDto> page = new Page<>(corund,limit);
+    public Page<CommodityDto> page(@PathVariable("currentPage") Integer page, @PathVariable("pageSize") Integer pageSize, Commodity commodity) {
+        Page<Commodity> pageInfo = new Page<>(page, pageSize);
+        Page<CommodityDto> commodityDtoPage = new Page<>();
 
-        return commodityService.findPage(page, new QueryWrapper<>());
+        LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
+        lqw.like(commodity.getCName() != null, Commodity::getCName, commodity.getCName());
+        lqw.like(commodity.getCManufacturer() != null, Commodity::getCManufacturer, commodity.getCManufacturer());
+
+        Page<Commodity> page1 = commodityService.page(pageInfo, lqw);
+
+        BeanUtils.copyProperties(pageInfo, commodityDtoPage, "records");
+        List<Commodity> records = pageInfo.getRecords();
+        List<CommodityDto> list = records.stream().map((item) -> {
+            CommodityDto commodityDto = new CommodityDto();
+            BeanUtils.copyProperties(item, commodityDto);
+
+            Integer cNo = item.getCNo();
+            //根据id查询仓库对象
+            Warehouse warehouse = warehouseService.getById(cNo);
+            if (warehouse != null){
+                Integer cNumber = warehouse.getCNumber();
+                commodityDto.setNumber(cNumber);
+            }
+            return commodityDto;
+        }).collect(Collectors.toList());
+
+        commodityDtoPage.setRecords(list);
+
+        return commodityDtoPage;
     }
 
 

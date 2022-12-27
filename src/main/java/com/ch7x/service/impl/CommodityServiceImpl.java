@@ -15,25 +15,4 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity> implements CommodityService {
-
-    @Autowired
-    private CommodityMapper commodityMapper;
-
-
-    @Override
-    public IPage<Commodity> getPage(int currentPage, int pageSize, CommodityDto commodity) {
-        LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
-        lqw.like(Strings.isNotEmpty(commodity.getCName()) , Commodity::getCName, commodity.getCName());
-        lqw.like(Strings.isNotEmpty(commodity.getCManufacturer()) , Commodity::getCManufacturer, commodity.getCManufacturer());
-
-        IPage<Commodity> page = new Page<>(currentPage, pageSize);
-        commodityMapper.selectPage(page,lqw);
-        return page;
-    }
-
-    @Override
-    public IPage<CommodityDto> findPage(Page<CommodityDto> page, QueryWrapper<CommodityDto> queryWrapper) {
-
-        return commodityMapper.findPage(page,queryWrapper);
-    }
 }

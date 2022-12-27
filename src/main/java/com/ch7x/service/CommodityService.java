@@ -9,7 +9,4 @@ import com.ch7x.dto.CommodityDto;
 
 
 public interface CommodityService extends IService<Commodity> {
-    IPage<Commodity> getPage(int currentPage, int pageSize, CommodityDto commodity);
-
-    IPage<CommodityDto> findPage(Page<CommodityDto> page, QueryWrapper<CommodityDto> queryWrapper);
 }
