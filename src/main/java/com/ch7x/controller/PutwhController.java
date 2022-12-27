@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -101,9 +98,6 @@ public class PutwhController {
     public Page<PutwhDto> page(@PathVariable("currentPage") Integer page,
                                @PathVariable("pageSize") Integer pageSize, Commodity commodity,
                                @RequestParam("value") String value) {
-//        System.out.println(commodity);
-//        System.out.println(value);
-//        System.out.println(value.length());
 
         Page<Putwh> pageInfo = new Page<>(page, pageSize);
         Page<PutwhDto> putwhDtoPage = new Page<>();
@@ -160,17 +154,33 @@ public class PutwhController {
             putLambdaQueryWrapper.le(Putwh::getPDate, date2);
         }
 
+        LambdaQueryWrapper<Commodity> commodityLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        commodityLambdaQueryWrapper.like(commodity.getCName()!=null,Commodity::getCName,commodity.getCName());
+
+        Page<Commodity> commodityPage = new Page<>();
+        commodityService.page(commodityPage,commodityLambdaQueryWrapper);
+        List<Commodity> commodityPageRecords = commodityPage.getRecords();
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        for (Commodity commodityPageRecord : commodityPageRecords) {
+            arrayList.add(commodityPageRecord.getCNo());
+        }
+
+        arrayList.forEach(System.out::println);
+        putLambdaQueryWrapper.in(Putwh::getCNo,arrayList);
         putwhService.page(pageInfo, putLambdaQueryWrapper);
+
 
         BeanUtils.copyProperties(pageInfo, putwhDtoPage, "records");
         List<Putwh> records = pageInfo.getRecords();
         List<PutwhDto> list = records.stream().map((item) -> {
             PutwhDto putwhDto = new PutwhDto();
-            BeanUtils.copyProperties(item, putwhDto);
-
             Integer cNo = item.getCNo();
             //根据id查询商品对象
             Commodity tempCommodity = commodityService.getById(cNo);
+
+            BeanUtils.copyProperties(item, putwhDto);
+
+
             if (tempCommodity != null) {
                 String cName = tempCommodity.getCName();
                 String cManufacturer = tempCommodity.getCManufacturer();
@@ -184,14 +194,19 @@ public class PutwhController {
             return putwhDto;
         }).collect(Collectors.toList());
 
+
+
+
+
+
         putwhDtoPage.setRecords(list);
 
         //1,通过商品名字得到所有商品cno
         //select cno from commodity where cname like commodity.getCName()
-        int cno = 0;
-        //2，通过cno查询入库表
-        LambdaQueryWrapper<PutwhDto> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(commodity.getCName() != null, PutwhDto::getCNo, cno);
+
+//        //2，通过cno查询入库表
+//        LambdaQueryWrapper<PutwhDto> lqw = new LambdaQueryWrapper<>();
+//        lqw.in(commodity.getCName() != null, PutwhDto::getCNo, arrayList);
 
 
         return putwhDtoPage;
