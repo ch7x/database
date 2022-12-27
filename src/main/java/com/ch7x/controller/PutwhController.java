@@ -152,9 +152,7 @@ public class PutwhController {
                 throw new RuntimeException(e);
             }
             Calendar calendar = new GregorianCalendar();
-            calendar.setTime(date1);
-            calendar.add(Calendar.HOUR, 24);
-            date1 = calendar.getTime();
+            calendar.setTime(date1);;
             calendar.add(Calendar.HOUR, 24);
             date2 = calendar.getTime();
 
