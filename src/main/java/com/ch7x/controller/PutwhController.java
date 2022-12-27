@@ -98,17 +98,15 @@ public class PutwhController {
      * 入库的分页查询
      */
     @GetMapping("/{currentPage}/{pageSize}")
-    public Page<Putwh> page(@PathVariable("currentPage") Integer page,
-                            @PathVariable("pageSize") Integer pageSize, Commodity commodity,
-                            @RequestParam("value") String value) {
+    public Page<PutwhDto> page(@PathVariable("currentPage") Integer page,
+                               @PathVariable("pageSize") Integer pageSize, Commodity commodity,
+                               @RequestParam("value") String value) {
 //        System.out.println(commodity);
 //        System.out.println(value);
 //        System.out.println(value.length());
 
-
         Page<Putwh> pageInfo = new Page<>(page, pageSize);
         Page<PutwhDto> putwhDtoPage = new Page<>();
-
 
         LambdaQueryWrapper<Putwh> putLambdaQueryWrapper = new LambdaQueryWrapper<>();
         if (value.length() == 4) {
@@ -162,7 +160,7 @@ public class PutwhController {
             putLambdaQueryWrapper.le(Putwh::getPDate, date2);
         }
 
-        Page<Putwh> page1 = putwhService.page(pageInfo, putLambdaQueryWrapper);
+        putwhService.page(pageInfo, putLambdaQueryWrapper);
 
         BeanUtils.copyProperties(pageInfo, putwhDtoPage, "records");
         List<Putwh> records = pageInfo.getRecords();
@@ -188,6 +186,14 @@ public class PutwhController {
 
         putwhDtoPage.setRecords(list);
 
-        return page1;
+        //1,通过商品名字得到所有商品cno
+        //select cno from commodity where cname like commodity.getCName()
+        int cno = 0;
+        //2，通过cno查询入库表
+        LambdaQueryWrapper<PutwhDto> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(commodity.getCName() != null, PutwhDto::getCNo, cno);
+
+
+        return putwhDtoPage;
     }
 }

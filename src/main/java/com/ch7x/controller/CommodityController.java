@@ -40,7 +40,7 @@ public class CommodityController {
         lqw.like(commodity.getCName() != null, Commodity::getCName, commodity.getCName());
         lqw.like(commodity.getCManufacturer() != null, Commodity::getCManufacturer, commodity.getCManufacturer());
 
-        Page<Commodity> page1 = commodityService.page(pageInfo, lqw);
+        commodityService.page(pageInfo, lqw);
 
         BeanUtils.copyProperties(pageInfo, commodityDtoPage, "records");
         List<Commodity> records = pageInfo.getRecords();
