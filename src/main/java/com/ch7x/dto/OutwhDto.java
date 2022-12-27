@@ -1,11 +1,10 @@
 package com.ch7x.dto;
 
-import com.ch7x.domain.Putwh;
+import com.ch7x.domain.Outwh;
 import lombok.Data;
 
-
 @Data
-public class PutwhDto extends Putwh {
+public class OutwhDto extends Outwh {
     private String cName;
     private String cManufacturer;
     private String cModel;
