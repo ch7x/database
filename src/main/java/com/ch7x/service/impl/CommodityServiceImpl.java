@@ -1,10 +1,12 @@
 package com.ch7x.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ch7x.domain.Commodity;
+import com.ch7x.dto.CommodityDto;
 import com.ch7x.mapper.CommodityMapper;
 import com.ch7x.service.CommodityService;
 import org.apache.logging.log4j.util.Strings;
@@ -17,13 +19,21 @@ public class CommodityServiceImpl extends ServiceImpl<CommodityMapper, Commodity
     @Autowired
     private CommodityMapper commodityMapper;
 
+
     @Override
-    public IPage<Commodity> getPage(int currentPage, int pageSize, Commodity commodity) {
+    public IPage<Commodity> getPage(int currentPage, int pageSize, CommodityDto commodity) {
         LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
         lqw.like(Strings.isNotEmpty(commodity.getCName()) , Commodity::getCName, commodity.getCName());
         lqw.like(Strings.isNotEmpty(commodity.getCManufacturer()) , Commodity::getCManufacturer, commodity.getCManufacturer());
+
         IPage<Commodity> page = new Page<>(currentPage, pageSize);
         commodityMapper.selectPage(page,lqw);
         return page;
+    }
+
+    @Override
+    public IPage<CommodityDto> findPage(Page<CommodityDto> page, QueryWrapper<CommodityDto> queryWrapper) {
+
+        return commodityMapper.findPage(page,queryWrapper);
     }
 }

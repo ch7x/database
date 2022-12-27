@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch7x.domain.Commodity;
 import com.ch7x.domain.Putwh;
 import com.ch7x.domain.Warehouse;
+import com.ch7x.dto.PutwhDto;
 import com.ch7x.service.CommodityService;
 import com.ch7x.service.PutwhService;
 import com.ch7x.service.WarehouseService;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-
-import static org.apache.logging.log4j.util.Strings.isNotEmpty;
 
 @RestController
 @RequestMapping("/put")
@@ -93,13 +92,8 @@ public class PutwhController {
      * 入库的分页查询
      */
     @GetMapping("/page")
-    public Page<Putwh> getByCno(int page, int pageSize, String date) {
-        Page<Putwh> pageInfo = new Page<>(page, pageSize);
-        System.out.println(page);
-        LambdaQueryWrapper<Putwh> lqw = new LambdaQueryWrapper<>();
-        System.out.println(date);
-        lqw.like(isNotEmpty(date), Putwh::getPDate, date);
+    public Page<Putwh> getByCno(int page, int pageSize, PutwhDto putwhDto) {
 
-        return putwhService.page(pageInfo, lqw);
+            return null;
     }
 }

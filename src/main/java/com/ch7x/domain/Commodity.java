@@ -25,8 +25,12 @@ public class Commodity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Commodity commodity = (Commodity) o;
         return Objects.equals(cName, commodity.cName) && Objects.equals(cManufacturer, commodity.cManufacturer) && Objects.equals(cModel, commodity.cModel) && Objects.equals(cSize, commodity.cSize);
     }

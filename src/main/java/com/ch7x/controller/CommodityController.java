@@ -1,8 +1,11 @@
 package com.ch7x.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch7x.domain.Commodity;
+import com.ch7x.dto.CommodityDto;
 import com.ch7x.service.CommodityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,16 +25,18 @@ public class CommodityController {
      * 商品查找
      */
     @GetMapping("/{currentPage}/{pageSize}")
-    public IPage<Commodity> getByCno(@PathVariable int currentPage, @PathVariable int pageSize,Commodity commodity) {
-//        Page<Commodity> pageInfo = new Page<>(page, pageSize);
-//        System.out.println(page);
-//        LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
-//        System.out.println(name);
-//        lqw.like(isNotEmpty(name), Commodity::getCName, name);
-        System.out.println(commodity);
+    public IPage<Commodity> getByCno(@PathVariable int currentPage, @PathVariable int pageSize, CommodityDto commodity) {
 
         return commodityService.getPage(currentPage,pageSize,commodity);
     }
+
+
+    @GetMapping("pageXml/{corund}/{limit}")
+    public IPage<CommodityDto> pageXml(@PathVariable("corund")Integer corund, @PathVariable("limit")Integer limit){
+        Page<CommodityDto> page = new Page<>(corund,limit);
+        return commodityService.findPage(page, new QueryWrapper<>());
+    }
+
 
     /**
      * 商品修改
