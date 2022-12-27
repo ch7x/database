@@ -6,7 +6,6 @@ import com.ch7x.domain.Commodity;
 import com.ch7x.domain.Outwh;
 import com.ch7x.domain.Warehouse;
 import com.ch7x.dto.OutwhDto;
-import com.ch7x.dto.PutwhDto;
 import com.ch7x.service.CommodityService;
 import com.ch7x.service.OutwhService;
 import com.ch7x.service.WarehouseService;
@@ -161,12 +160,6 @@ public class OutwhController {
 
         outwhDtoPage.setRecords(list);
 
-        //1,通过商品名字得到所有商品cno
-        //select cno from commodity where cname like commodity.getCName()
-        int cno = 0;
-        //2，通过cno查询入库表
-        LambdaQueryWrapper<PutwhDto> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(commodity.getCName() != null, PutwhDto::getCNo, cno);
 
         return outwhDtoPage;
     }
