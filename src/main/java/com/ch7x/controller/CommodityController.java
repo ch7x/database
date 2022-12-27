@@ -34,6 +34,7 @@ public class CommodityController {
     @GetMapping("pageXml/{corund}/{limit}")
     public IPage<CommodityDto> pageXml(@PathVariable("corund")Integer corund, @PathVariable("limit")Integer limit){
         Page<CommodityDto> page = new Page<>(corund,limit);
+
         return commodityService.findPage(page, new QueryWrapper<>());
     }
 
