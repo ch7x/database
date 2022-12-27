@@ -9,6 +9,7 @@ import com.ch7x.dto.PutwhDto;
 import com.ch7x.service.CommodityService;
 import com.ch7x.service.PutwhService;
 import com.ch7x.service.WarehouseService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/put")
@@ -105,7 +107,7 @@ public class PutwhController {
 
 
         Page<Putwh> pageInfo = new Page<>(page, pageSize);
-        Page<PutwhDto> commodityDtoPage = new Page<>();
+        Page<PutwhDto> putwhDtoPage = new Page<>();
 
 
         LambdaQueryWrapper<Putwh> putLambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -145,7 +147,7 @@ public class PutwhController {
 
         if (value.length() == 10) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date date1,date2;
+            Date date1, date2;
             try {
                 date1 = sdf.parse(value);
             } catch (ParseException e) {
@@ -164,28 +166,29 @@ public class PutwhController {
 
         Page<Putwh> page1 = putwhService.page(pageInfo, putLambdaQueryWrapper);
 
-//        lqw.like(commodity.getCName() != null, Commodity::getCName, commodity.getCName());
-//        lqw.like(commodity.getCManufacturer() != null, Commodity::getCManufacturer, commodity.getCManufacturer());
-//
-//        Page<Commodity> page1 = commodityService.page(pageInfo, lqw);
-//
-//        BeanUtils.copyProperties(pageInfo, commodityDtoPage, "records");
-//        List<Commodity> records = pageInfo.getRecords();
-//        List<CommodityDto> list = records.stream().map((item) -> {
-//            CommodityDto commodityDto = new CommodityDto();
-//            BeanUtils.copyProperties(item, commodityDto);
-//
-//            Integer cNo = item.getCNo();
-//            //根据id查询仓库对象
-//            Warehouse warehouse = warehouseService.getById(cNo);
-//            if (warehouse != null){
-//                Integer cNumber = warehouse.getCNumber();
-//                commodityDto.setNumber(cNumber);
-//            }
-//            return commodityDto;
-//        }).collect(Collectors.toList());
-//
-//        commodityDtoPage.setRecords(list);
+        BeanUtils.copyProperties(pageInfo, putwhDtoPage, "records");
+        List<Putwh> records = pageInfo.getRecords();
+        List<PutwhDto> list = records.stream().map((item) -> {
+            PutwhDto putwhDto = new PutwhDto();
+            BeanUtils.copyProperties(item, putwhDto);
+
+            Integer cNo = item.getCNo();
+            //根据id查询商品对象
+            Commodity tempCommodity = commodityService.getById(cNo);
+            if (tempCommodity != null) {
+                String cName = tempCommodity.getCName();
+                String cManufacturer = tempCommodity.getCManufacturer();
+                String cModel = tempCommodity.getCModel();
+                String cSize = tempCommodity.getCSize();
+                putwhDto.setCName(cName);
+                putwhDto.setCManufacturer(cManufacturer);
+                putwhDto.setCModel(cModel);
+                putwhDto.setCSize(cSize);
+            }
+            return putwhDto;
+        }).collect(Collectors.toList());
+
+        putwhDtoPage.setRecords(list);
 
         return page1;
     }
