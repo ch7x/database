@@ -21,7 +21,6 @@ public class Putwh {
     @TableField("number")
     private Integer pNumber;
     @TableField("p_date")
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd" , timezone = "GMT+8")
     private Date pDate;
     @TableField("deliveryman")

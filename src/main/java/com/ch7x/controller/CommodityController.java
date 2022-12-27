@@ -62,6 +62,12 @@ public class CommodityController {
     }
 
 
+    @GetMapping("/{id}")
+    public Commodity getById(@PathVariable Integer id) {
+        return commodityService.getById(id);
+    }
+
+
     /**
      * 商品修改
      */

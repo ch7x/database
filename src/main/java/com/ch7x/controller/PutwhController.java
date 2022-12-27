@@ -35,20 +35,23 @@ public class PutwhController {
      * http://localhost/put?pNumber=1&deliveryman="黄 章"
      */
     @PostMapping()
-    public boolean insert(PutwhDto putwhDto) {
+    public boolean insert(@RequestBody PutwhDto putwhDto) {
 
-        System.out.println(putwhDto);
-        /*//入库日志
+        //入库日志
         Putwh putwh = new Putwh();
-        putwh.setDeliveryman(deliveryman);
+        putwh.setDeliveryman(putwhDto.getDeliveryman());
         putwh.setPDate(new Date());
-        putwh.setPNumber(pNumber);
+        putwh.setPNumber(putwhDto.getPNumber());
 
         //查询商品表中有没有重名的
         LambdaQueryWrapper<Commodity> lqw1 = new LambdaQueryWrapper<>();
-        lqw1.eq(Commodity::getCName, commodity.getCName());
+        lqw1.eq(Commodity::getCName, putwhDto.getCName());
         List<Commodity> list1 = commodityService.list(lqw1);
 
+        Commodity commodity = new Commodity();
+        BeanUtils.copyProperties(putwhDto,commodity);
+
+        System.out.println(commodity);
         Integer cNo = -1;
         boolean flag = false;
         for (Commodity commodity1 : list1) {
@@ -59,6 +62,7 @@ public class PutwhController {
             }
         }
 
+
         if (commodityService.count(lqw1) != 0 && flag) {
             //如果仓库中有该商品，则添加数量
             LambdaQueryWrapper<Warehouse> lqw2 = new LambdaQueryWrapper<>();
@@ -67,7 +71,7 @@ public class PutwhController {
             //因为cno是唯一的所以这个list里只会有一个参数
             List<Warehouse> list = warehouseService.list(lqw2);
             Warehouse warehouse = list.get(0);
-            warehouse.setCNumber(warehouse.getCNumber() + pNumber);
+            warehouse.setCNumber(warehouse.getCNumber() + putwhDto.getPNumber());
             warehouseService.updateById(warehouse);
 
             //记录入库日志
@@ -79,16 +83,15 @@ public class PutwhController {
             commodityService.save(commodity);
 
             Warehouse warehouse = new Warehouse();
-            warehouse.setCNumber(pNumber);
+            warehouse.setCNumber(putwhDto.getPNumber());
             warehouse.setCNo(commodity.getCNo());
             warehouseService.save(warehouse);
 
             //记录入库日志
             putwh.setWNo(warehouse.getWNo());
             putwh.setCNo(commodity.getCNo());
-        }*/
-//        return putwhService.save(putwh);
-        return true;
+        }
+        return putwhService.save(putwh);
     }
 
     /**
@@ -147,9 +150,8 @@ public class PutwhController {
             }
             Calendar calendar = new GregorianCalendar();
             calendar.setTime(date1);
-            calendar.add(Calendar.HOUR, 24);
+            calendar.add(Calendar.HOUR, 23);
             date2 = calendar.getTime();
-
             putLambdaQueryWrapper.ge(Putwh::getPDate, date1);
             putLambdaQueryWrapper.le(Putwh::getPDate, date2);
         }
@@ -169,6 +171,7 @@ public class PutwhController {
             arrayList.add(-1);
         }
         putLambdaQueryWrapper.in(Putwh::getCNo,arrayList);
+        putLambdaQueryWrapper.orderByDesc(Putwh::getPDate);
         putwhService.page(pageInfo, putLambdaQueryWrapper);
 
 

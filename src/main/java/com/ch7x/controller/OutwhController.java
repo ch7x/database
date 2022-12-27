@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ch7x.domain.Commodity;
 import com.ch7x.domain.Outwh;
-import com.ch7x.domain.Putwh;
 import com.ch7x.domain.Warehouse;
 import com.ch7x.dto.OutwhDto;
 import com.ch7x.dto.PutwhDto;
@@ -38,53 +37,33 @@ public class OutwhController {
      * 1,出库操作
      * 2,记录出库日志
      */
-    @PutMapping()
-    public boolean modify(@RequestBody Commodity commodity,             //出库商品
-                          @RequestParam Integer oNumber,                //出库商品数量
-                          @RequestParam String purchaser) {             //出库人
+    @PostMapping()
+    public boolean modify(@RequestBody OutwhDto outwhDto) {
+        System.out.println(outwhDto);
+        //出库人
         //出库日志
         Outwh outwh = new Outwh();
-        outwh.setPurchaser(purchaser);
+        outwh.setPurchaser(outwhDto.getPurchaser());
         outwh.setODate(new Date());
-        outwh.setONumber(oNumber);
+        outwh.setONumber(outwhDto.getONumber());
 
-        //查询商品表中有没有重名的
-        LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Commodity::getCName, commodity.getCName());
-        List<Commodity> list1 = commodityService.list(lqw);
-
-        Integer cNo = -1;
-        boolean flag;
-        for (Commodity commodity1 : list1) {
-            flag = commodity1.equals(commodity);
-            if (flag) {
-                cNo = commodity1.getCNo();
-                break;
-            }
-        }
-        System.out.println(commodityService.count(lqw));
-        //如果没有,结束
-        if (commodityService.count(lqw) == 0) {
-            System.out.println("仓库中没有这件商品");
-            return false;
-        }
 
         //如果有,得到此商品在仓库的数据
         LambdaQueryWrapper<Warehouse> lqw2 = new LambdaQueryWrapper<>();
-        lqw2.eq(Warehouse::getCNo, cNo);
+        lqw2.eq(Warehouse::getCNo, outwhDto.getCNo());
 
         //因为cno是唯一的所以这个list里只会有一个参数
         List<Warehouse> list = warehouseService.list(lqw2);
         Warehouse warehouse = list.get(0);
 
         //如果数量不足,结束
-        if (oNumber > warehouse.getCNumber()) {
+        if (outwhDto.getONumber() > warehouse.getCNumber()) {
             System.out.println("仓库中这件商品数量不足");
             return false;
         }
 
         //如果数量充足,则出库
-        warehouse.setCNumber(warehouse.getCNumber() - oNumber);
+        warehouse.setCNumber(warehouse.getCNumber() - outwhDto.getONumber());
         warehouseService.updateById(warehouse);
 
         //记录出库日志
@@ -188,7 +167,6 @@ public class OutwhController {
         //2，通过cno查询入库表
         LambdaQueryWrapper<PutwhDto> lqw = new LambdaQueryWrapper<>();
         lqw.eq(commodity.getCName() != null, PutwhDto::getCNo, cno);
-
 
         return outwhDtoPage;
     }
