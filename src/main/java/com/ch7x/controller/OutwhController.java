@@ -134,7 +134,7 @@ public class OutwhController {
         LambdaQueryWrapper<Commodity> commodityLambdaQueryWrapper = new LambdaQueryWrapper<>();
         commodityLambdaQueryWrapper.like(commodity.getCName()!=null,Commodity::getCName,commodity.getCName());
 
-        Page<Commodity> commodityPage = new Page<>();
+        Page<Commodity> commodityPage = new Page<>(1,1000);
         commodityService.page(commodityPage,commodityLambdaQueryWrapper);
         List<Commodity> commodityPageRecords = commodityPage.getRecords();
         ArrayList<Integer> arrayList = new ArrayList<>();
