@@ -124,7 +124,7 @@ public class OutwhController {
             }
             Calendar calendar = new GregorianCalendar();
             calendar.setTime(date1);
-            calendar.add(Calendar.HOUR, 24);
+            calendar.add(Calendar.HOUR, 23);
             date2 = calendar.getTime();
 
             outLambdaQueryWrapper.ge(Outwh::getODate, date1);

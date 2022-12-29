@@ -170,8 +170,10 @@ public class PutwhController {
         if(arrayList.size()==0){
             arrayList.add(-1);
         }
-        putLambdaQueryWrapper.in(Putwh::getCNo,arrayList);
 
+        arrayList.forEach(System.out::println);
+
+        putLambdaQueryWrapper.in(Putwh::getCNo,arrayList);
         putLambdaQueryWrapper.orderByDesc(Putwh::getPDate);
 
         putwhService.page(pageInfo, putLambdaQueryWrapper);

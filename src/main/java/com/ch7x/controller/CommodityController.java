@@ -37,6 +37,7 @@ public class CommodityController {
         LambdaQueryWrapper<Commodity> lqw = new LambdaQueryWrapper<>();
         lqw.like(commodity.getCName() != null, Commodity::getCName, commodity.getCName());
         lqw.like(commodity.getCManufacturer() != null, Commodity::getCManufacturer, commodity.getCManufacturer());
+        lqw.orderByDesc(Commodity::getCNo);
 
         commodityService.page(pageInfo, lqw);
 
